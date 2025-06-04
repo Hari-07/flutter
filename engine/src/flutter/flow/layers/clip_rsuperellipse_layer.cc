@@ -20,4 +20,10 @@ void ClipRSuperellipseLayer::ApplyClip(
   mutator.clipRSuperellipse(clip_shape(), clip_behavior() != Clip::kHardEdge);
 }
 
+void ClipRSuperellipseLayer::PushClipToEmbedderStack(
+    PrerollContext* context) const {
+  context->view_embedder->PushClipRSuperellipseToVisitedPlatformViews(
+      clip_shape());
+}
+
 }  // namespace flutter
