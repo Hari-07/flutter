@@ -71,6 +71,13 @@ class IOSExternalViewEmbedder : public ExternalViewEmbedder {
       const std::shared_ptr<DlImageFilter>& filter,
       const DlRect& filter_rect) override;
 
+  void PushClipRectToVisitedPlatformViews(const DlRect& clip_shape) override;
+  void PushClipRRectToVisitedPlatformViews(
+      const DlRoundRect& clip_shape) override;
+  void PushClipPathToVisitedPlatformViews(const DlPath& clip_shape) override;
+  void PushClipRSuperellipseToVisitedPlatformViews(
+      const DlRoundSuperellipse& clip_shape) override;
+
   // |ExternalViewEmbedder|
   void PushVisitedPlatformView(int64_t view_id) override;
 

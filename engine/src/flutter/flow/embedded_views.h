@@ -38,6 +38,10 @@ enum class MutatorType {
   kTransform,
   kOpacity,
   kBackdropFilter
+//  kBackdropClipRect,
+//  kBackdropClipRRect,
+//  kBackdropClipRSE,
+//  kBackdropClipPath
 };
 
 // Represents an image filter mutation.
@@ -150,6 +154,11 @@ class MutatorsStack {
   // `filter_rect` is in global coordinates.
   void PushBackdropFilter(const std::shared_ptr<DlImageFilter>& filter,
                           const DlRect& filter_rect);
+    
+    void PushPlatformViewClipRect(const DlRect& rect);
+    void PushPlatformViewClipRRect(const DlRoundRect& rect);
+    void PushPlatformViewClipRSE(const DlRoundSuperellipse& rse);
+    void PushPlatformViewClipPath(const DlPath& path);
 
   // Removes the `Mutator` on the top of the stack
   // and destroys it.
@@ -247,6 +256,22 @@ class EmbeddedViewParams {
   void PushImageFilter(const std::shared_ptr<DlImageFilter>& filter,
                        const DlRect& filter_rect) {
     mutators_stack_.PushBackdropFilter(filter, filter_rect);
+  }
+
+  void PushPlatformViewClipRect(const DlRect& clip_rect) {
+    mutators_stack_.PushPlatformViewClipRect(clip_rect);
+  }
+
+  void PushPlatformViewClipRRect(const DlRoundRect& clip_rrect) {
+    mutators_stack_.PushPlatformViewClipRRect(clip_rrect);
+  }
+
+  void PushPlatformViewClipPath(const DlPath& clip_path) {
+    mutators_stack_.PushClipPath(clip_path);
+  }
+
+  void PushPlatformViewClipRSE(const DlRoundSuperellipse& clip_rse) {
+    mutators_stack_.PushPlatformViewClipRSE(clip_rse);
   }
 
   bool operator==(const EmbeddedViewParams& other) const {
@@ -458,6 +483,13 @@ class ExternalViewEmbedder {
   virtual void PushFilterToVisitedPlatformViews(
       const std::shared_ptr<DlImageFilter>& filter,
       const DlRect& filter_rect) {}
+
+  virtual void PushClipRectToVisitedPlatformViews(const DlRect& clip_shape) {}
+  virtual void PushClipRRectToVisitedPlatformViews(
+      const DlRoundRect& clip_shape) {}
+  virtual void PushClipPathToVisitedPlatformViews(const DlPath& clip_shape) {}
+  virtual void PushClipRSuperellipseToVisitedPlatformViews(
+      const DlRoundSuperellipse& clip_shape) {}
 
  private:
   bool used_this_frame_ = false;

@@ -68,8 +68,8 @@ void MutatorsStack::PushClipRRect(const DlRoundRect& rrect) {
   vector_.push_back(element);
 }
 
-void MutatorsStack::PushClipRSE(const DlRoundSuperellipse& rrect) {
-  std::shared_ptr<Mutator> element = std::make_shared<Mutator>(rrect);
+void MutatorsStack::PushClipRSE(const DlRoundSuperellipse& rse) {
+  std::shared_ptr<Mutator> element = std::make_shared<Mutator>(rse);
   vector_.push_back(element);
 }
 
@@ -95,6 +95,14 @@ void MutatorsStack::PushBackdropFilter(
       std::make_shared<Mutator>(filter, filter_rect);
   vector_.push_back(element);
 }
+
+void MutatorsStack::PushPlatformViewClipRect(const DlRect& rect) {}
+
+void MutatorsStack::PushPlatformViewClipRRect(const DlRoundRect& rrect) {}
+
+void MutatorsStack::PushPlatformViewClipRSE(const DlRoundSuperellipse& rse) {}
+
+void MutatorsStack::PushPlatformViewClipPath(const DlPath& path) {}
 
 void MutatorsStack::Pop() {
   vector_.pop_back();

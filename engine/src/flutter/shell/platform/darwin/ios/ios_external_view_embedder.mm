@@ -113,4 +113,21 @@ void IOSExternalViewEmbedder::PushVisitedPlatformView(int64_t view_id) {
   [platform_views_controller_ pushVisitedPlatformViewId:view_id];
 }
 
+void IOSExternalViewEmbedder::PushClipRectToVisitedPlatformViews(const DlRect& clip_rect) {
+  [platform_views_controller_ pushClipRectToVisitedPlatformViews:clip_rect];
+}
+
+void IOSExternalViewEmbedder::PushClipRRectToVisitedPlatformViews(const DlRoundRect& clip_rrect) {
+  [platform_views_controller_ pushClipRRectToVisitedPlatformViews:clip_rrect];
+}
+
+void IOSExternalViewEmbedder::PushClipPathToVisitedPlatformViews(const DlPath& clip_shape) {
+  [platform_views_controller_ pushClipPathToVisitedPlatformViews:clip_shape];
+}
+
+void IOSExternalViewEmbedder::PushClipRSuperellipseToVisitedPlatformViews(
+    const DlRoundSuperellipse& clip_shape) {
+  [platform_views_controller_ pushClipRSuperellipseToVisitedPlatformViews:clip_shape];
+}
+
 }  // namespace flutter

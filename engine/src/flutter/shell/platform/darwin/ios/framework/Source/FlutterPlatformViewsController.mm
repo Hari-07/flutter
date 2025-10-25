@@ -586,6 +586,8 @@ static CGRect GetCGRectFromDlRect(const DlRect& clipDlRect) {
         }
         break;
       }
+//      case flutter::MutatorType::kBackdropClipPath: {
+//      }
     }
     ++iter;
   }
@@ -949,6 +951,38 @@ static CGRect GetCGRectFromDlRect(const DlRect& clipDlRect) {
 
 - (void)pushVisitedPlatformViewId:(int64_t)viewId {
   self.visitedPlatformViews.push_back(viewId);
+}
+
+- (void)pushClipRectToVisitedPlatformViews:(const flutter::DlRect&)clipRect {
+  for (int64_t id : self.visitedPlatformViews) {
+    flutter::EmbeddedViewParams params = self.currentCompositionParams[id];
+    params.PushPlatformViewClipRect(clipRect);
+    self.currentCompositionParams[id] = params;
+  }
+}
+
+- (void)pushClipRRectToVisitedPlatformViews:(const flutter::DlRoundRect&)clipRRect {
+  for (int64_t id : self.visitedPlatformViews) {
+    flutter::EmbeddedViewParams params = self.currentCompositionParams[id];
+    params.PushPlatformViewClipRRect(clipRRect);
+    self.currentCompositionParams[id] = params;
+  }
+}
+
+- (void)pushClipPathToVisitedPlatformViews:(const flutter::DlPath&)clipShape {
+  for (int64_t id : self.visitedPlatformViews) {
+    flutter::EmbeddedViewParams params = self.currentCompositionParams[id];
+    params.PushPlatformViewClipPath(clipShape);
+    self.currentCompositionParams[id] = params;
+  }
+}
+
+- (void)pushClipRSuperellipseToVisitedPlatformViews:(const flutter::DlRoundSuperellipse&)clipShape {
+  for (int64_t id : self.visitedPlatformViews) {
+    flutter::EmbeddedViewParams params = self.currentCompositionParams[id];
+    params.PushPlatformViewClipRSE(clipShape);
+    self.currentCompositionParams[id] = params;
+  }
 }
 
 - (const flutter::EmbeddedViewParams&)compositionParamsForView:(int64_t)viewId {
