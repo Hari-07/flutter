@@ -177,6 +177,10 @@ struct PlatformView {
         }
         case MutatorType::kOpacity:
         case MutatorType::kBackdropFilter:
+        case MutatorType::kBackdropClipRect:
+        case MutatorType::kBackdropClipRRect:
+        case MutatorType::kBackdropClipRSE:
+        case MutatorType::kBackdropClipPath:
           break;
       }
     }
@@ -192,8 +196,8 @@ struct PlatformView {
 /// In Z order the Flutter contents of Layer is above the platform views.
 class Layer {
  public:
-  /// Returns whether the rectangle intersects any of the platform views of
-  /// this layer.
+  /// Returns whether the rectangle intersects any of the platform views
+  /// of this layer.
   bool IntersectsPlatformView(const SkRect& rect) {
     for (auto& platform_view : platform_views_) {
       if (platform_view.clipped_frame.intersects(rect)) {
@@ -203,8 +207,8 @@ class Layer {
     return false;
   }
 
-  /// Returns whether the region intersects any of the platform views of this
-  /// layer.
+  /// Returns whether the region intersects any of the platform views of
+  /// this layer.
   bool IntersectsPlatformView(const DlRegion& region) {
     for (auto& platform_view : platform_views_) {
       auto clipped_frame = ToDlIRect(platform_view.clipped_frame.roundOut());
@@ -215,14 +219,14 @@ class Layer {
     return false;
   }
 
-  /// Returns whether the rectangle intersects any of the Flutter contents of
-  /// this layer.
+  /// Returns whether the rectangle intersects any of the Flutter
+  /// contents of this layer.
   bool IntersectsFlutterContents(const SkRect& rect) {
     return flutter_contents_region_.intersects(ToDlIRect(rect.roundOut()));
   }
 
-  /// Returns whether the region intersects any of the Flutter contents of this
-  /// layer.
+  /// Returns whether the region intersects any of the Flutter contents
+  /// of this layer.
   bool IntersectsFlutterContents(const DlRegion& region) {
     return flutter_contents_region_.intersects(region);
   }
@@ -248,8 +252,8 @@ class Layer {
     render_target_ = std::move(target);
   }
 
-  /// Renders this layer Flutter contents to the render target previously
-  /// assigned with SetRenderTarget.
+  /// Renders this layer Flutter contents to the render target
+  /// previously assigned with SetRenderTarget.
   void RenderFlutterContents() {
     FML_DCHECK(has_flutter_contents());
     if (render_target_) {
@@ -261,8 +265,8 @@ class Layer {
     }
   }
 
-  /// Returns platform views for this layer. In Z-order the platform views are
-  /// positioned *below* this layer's Flutter contents.
+  /// Returns platform views for this layer. In Z-order the platform
+  /// views are positioned *below* this layer's Flutter contents.
   const std::vector<PlatformView>& platform_views() const {
     return platform_views_;
   }
@@ -281,12 +285,13 @@ class Layer {
   friend class LayerBuilder;
 };
 
-/// A layout builder is responsible for building an optimized list of Layers
-/// from a list of `EmbedderExternalView`s. Single EmbedderExternalView contains
-/// at most one platform view and at most one layer of Flutter contents
-/// ('slice'). LayerBuilder is responsible for producing as few Layers from the
-/// list of EmbedderExternalViews as possible while maintaining identical visual
-/// result.
+/// A layout builder is responsible for building an optimized list of
+/// Layers from a list of `EmbedderExternalView`s. Single
+/// EmbedderExternalView contains at most one platform view and at most
+/// one layer of Flutter contents
+/// ('slice'). LayerBuilder is responsible for producing as few Layers
+/// from the list of EmbedderExternalViews as possible while maintaining
+/// identical visual result.
 ///
 /// Implements https://flutter.dev/go/optimized-platform-view-layers
 class LayerBuilder {
@@ -302,8 +307,8 @@ class LayerBuilder {
   /// Adds the platform view and/or flutter contents from the
   /// EmbedderExternalView instance.
   ///
-  /// This will try to add the content and platform view to an existing layer
-  /// if possible. If not, a new layer will be created.
+  /// This will try to add the content and platform view to an existing
+  /// layer if possible. If not, a new layer will be created.
   void AddExternalView(EmbedderExternalView* view) {
     if (view->HasPlatformView()) {
       PlatformView platform_view(view);
@@ -314,7 +319,8 @@ class LayerBuilder {
     }
   }
 
-  /// Prepares the render targets for all layers that have Flutter contents.
+  /// Prepares the render targets for all layers that have Flutter
+  /// contents.
   void PrepareBackingStore(const RenderTargetProvider& target_provider) {
     for (auto& layer : layers_) {
       if (layer.has_flutter_contents()) {
@@ -349,7 +355,8 @@ class LayerBuilder {
     }
   }
 
-  /// Removes the render targets from layers and returns them for collection.
+  /// Removes the render targets from layers and returns them for
+  /// collection.
   std::vector<std::unique_ptr<EmbedderRenderTarget>>
   ClearAndCollectRenderTargets() {
     std::vector<std::unique_ptr<EmbedderRenderTarget>> result;
@@ -375,16 +382,19 @@ class LayerBuilder {
                                                                 region);
   }
 
-  /// Returns the deepest layer to which the platform view can be added. That
-  /// would be (whichever comes first):
-  /// - First layer from back that has platform view that intersects with this
+  /// Returns the deepest layer to which the platform view can be added.
+  /// That would be (whichever comes first):
+  /// - First layer from back that has platform view that intersects with
+  /// this
   ///   view
-  /// - Very last layer from back that has surface that doesn't intersect with
-  ///   this. That is because layer content renders on top of the platform view.
+  /// - Very last layer from back that has surface that doesn't intersect
+  /// with
+  ///   this. That is because layer content renders on top of the platform
+  ///   view.
   Layer& GetLayerForPlatformView(PlatformView view) {
     for (auto iter = layers_.rbegin(); iter != layers_.rend(); ++iter) {
-      // This layer has surface that intersects with this view. That means we
-      // went one too far and need the layer before this.
+      // This layer has surface that intersects with this view. That means
+      // we went one too far and need the layer before this.
       if (iter->IntersectsFlutterContents(view.clipped_frame)) {
         if (iter == layers_.rbegin()) {
           layers_.emplace_back();
@@ -424,8 +434,8 @@ void EmbedderExternalViewEmbedder::SubmitFlutterView(
     GrDirectContext* context,
     const std::shared_ptr<impeller::AiksContext>& aiks_context,
     std::unique_ptr<SurfaceFrame> frame) {
-  // The unordered_map render_target_cache creates a new entry if the view ID is
-  // unrecognized.
+  // The unordered_map render_target_cache creates a new entry if the view
+  // ID is unrecognized.
   EmbedderRenderTargetCache& render_target_cache =
       render_target_caches_[flutter_view_id];
   DlRect _rect = DlRect::MakeSize(pending_frame_size_)
@@ -452,24 +462,24 @@ void EmbedderExternalViewEmbedder::SubmitFlutterView(
   });
 
   // This is where unused render targets will be collected. Control may flow
-  // to the embedder. Here, the embedder has the opportunity to trample on the
-  // OpenGL context.
+  // to the embedder. Here, the embedder has the opportunity to trample on
+  // the OpenGL context.
   //
-  // For optimum performance, we should tell the render target cache to clear
-  // its unused entries before allocating new ones. This collection step
-  // before allocating new render targets ameliorates peak memory usage within
-  // the frame. But, this causes an issue in a known internal embedder. To
-  // work around this issue while that embedder migrates, collection of render
-  // targets is deferred after the presentation.
+  // For optimum performance, we should tell the render target cache to
+  // clear its unused entries before allocating new ones. This collection
+  // step before allocating new render targets ameliorates peak memory usage
+  // within the frame. But, this causes an issue in a known internal
+  // embedder. To work around this issue while that embedder migrates,
+  // collection of render targets is deferred after the presentation.
   //
   // @warning: Embedder may trample on our OpenGL context here.
   auto deferred_cleanup_render_targets =
       render_target_cache.ClearAllRenderTargetsInCache();
 
 #if !SLIMPELLER
-  // The OpenGL context could have been trampled by the embedder at this point
-  // as it attempted to collect old render targets and create new ones. Tell
-  // Skia to not rely on existing bindings.
+  // The OpenGL context could have been trampled by the embedder at this
+  // point as it attempted to collect old render targets and create new
+  // ones. Tell Skia to not rely on existing bindings.
   if (context) {
     context->resetContext(kAll_GrBackendState);
   }
