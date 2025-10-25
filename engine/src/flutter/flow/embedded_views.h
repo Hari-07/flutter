@@ -284,7 +284,7 @@ class EmbeddedViewParams {
   }
 
   void PushPlatformViewClipPath(const DlPath& clip_path) {
-    mutators_stack_.PushClipPath(clip_path);
+    mutators_stack_.PushPlatformViewClipPath(clip_path);
   }
 
   void PushPlatformViewClipRSE(const DlRoundSuperellipse& clip_rse) {
