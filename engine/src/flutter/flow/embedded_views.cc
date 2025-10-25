@@ -96,13 +96,25 @@ void MutatorsStack::PushBackdropFilter(
   vector_.push_back(element);
 }
 
-void MutatorsStack::PushPlatformViewClipRect(const DlRect& rect) {}
+void MutatorsStack::PushPlatformViewClipRect(const DlRect& rect) {
+  std::shared_ptr<Mutator> element = std::make_shared<Mutator>(MutatorType::kBackdropClipRect, rect);
+  vector_.push_back(element);
+}
 
-void MutatorsStack::PushPlatformViewClipRRect(const DlRoundRect& rrect) {}
+void MutatorsStack::PushPlatformViewClipRRect(const DlRoundRect& rrect) {
+    std::shared_ptr<Mutator> element = std::make_shared<Mutator>(MutatorType::kBackdropClipRRect, rrect);
+    vector_.push_back(element);
+}
 
-void MutatorsStack::PushPlatformViewClipRSE(const DlRoundSuperellipse& rse) {}
+void MutatorsStack::PushPlatformViewClipRSE(const DlRoundSuperellipse& rse) {
+    std::shared_ptr<Mutator> element = std::make_shared<Mutator>(MutatorType::kBackdropClipRSE, rse);
+    vector_.push_back(element);
+}
 
-void MutatorsStack::PushPlatformViewClipPath(const DlPath& path) {}
+void MutatorsStack::PushPlatformViewClipPath(const DlPath& path) {
+    std::shared_ptr<Mutator> element = std::make_shared<Mutator>(MutatorType::kBackdropClipPath, path);
+    vector_.push_back(element);
+}
 
 void MutatorsStack::Pop() {
   vector_.pop_back();

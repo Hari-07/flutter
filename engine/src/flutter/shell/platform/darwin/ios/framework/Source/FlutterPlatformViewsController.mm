@@ -586,8 +586,10 @@ static CGRect GetCGRectFromDlRect(const DlRect& clipDlRect) {
         }
         break;
       }
-//      case flutter::MutatorType::kBackdropClipPath: {
-//      }
+      case flutter::MutatorType::kBackdropClipRect:  {}
+      case flutter::MutatorType::kBackdropClipRRect:  {}
+      case flutter::MutatorType::kBackdropClipRSE:  {}
+      case flutter::MutatorType::kBackdropClipPath: {}
     }
     ++iter;
   }

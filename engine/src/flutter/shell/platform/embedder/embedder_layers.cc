@@ -186,6 +186,10 @@ void EmbedderLayers::PushPlatformViewLayer(
           }
         } break;
         case MutatorType::kBackdropFilter:
+        case MutatorType::kBackdropClipRect:
+        case MutatorType::kBackdropClipRRect:
+        case MutatorType::kBackdropClipRSE:
+        case MutatorType::kBackdropClipPath:
           break;
       }
     }
